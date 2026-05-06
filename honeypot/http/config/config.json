@@ -1,0 +1,40 @@
+{
+    "server": {
+        "host": "0.0.0.0",
+        "port": 8080
+    },
+    "server_headers": [
+        "nginx/1.24.0",
+        "Apache/2.4.57 (Ubuntu)",
+        "Microsoft-IIS/10.0",
+        "openresty/1.21.4.1",
+        "Caddy",
+        "Apache/2.4.41 (Unix)",
+        "nginx/1.18.0"
+    ],
+    "login_paths": [
+        "/login",
+        "/admin",
+        "/backend",
+        "/wp-admin",
+        "/signin"
+    ],
+    "active_login_path": "/login",
+    "probability": {
+        "error_page": 0.80,
+        "server_error": 0.15,
+        "delay": 0.05
+    },
+    "delay_range": {
+        "min": 1.0,
+        "max": 3.0
+    },
+    "social_probe": {
+        "enabled": true,
+        "targets": [
+            {"name": "weibo", "url": "https://login.sina.com.cn/sso/login.php?callback=__scallop_probe"},
+            {"name": "baidu", "url": "https://passport.baidu.com/v2/api/?getapi&callback=__scallop_probe"},
+            {"name": "zhihu", "url": "https://www.zhihu.com/api/v3/oauth/callback?callback=__scallop_probe"}
+        ]
+    }
+}
