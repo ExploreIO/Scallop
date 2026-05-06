@@ -8,6 +8,13 @@ import json
 from datetime import datetime, timedelta
 import random
 import os
+import sys
+
+# 添加项目路径
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from commands.executor import CommandExecutor
+from filesystem import VirtualFS
 
 # 日志文件
 LOG_FILE = Path("logs/honeypot.log")
@@ -15,6 +22,10 @@ LOG_FILE = Path("logs/honeypot.log")
 LOGIN_TIME_FILE = Path("logs/.last_login")
 # 全局变量：存储捕获的密码
 captured_password = ''
+# 全局虚拟文件系统（所有连接共享）
+global_vfs = VirtualFS()
+# 命令执行器（注入 VFS）
+cmd_executor = CommandExecutor(vfs=global_vfs)
 
 def log_attack(ip, username, password, commands, action='session_end'):
     """记录攻击行为"""
@@ -140,10 +151,13 @@ async def handle_client(process):
                 return
             
             # 执行命令
-            if cmd == 'ls':
-                output = 'Documents  Downloads  .ssh  .bashrc  .profile\n'
+            if cmd:
+                parts = cmd.split()
+                cmd_name = parts[0]
+                cmd_args = parts[1] if len(parts) > 1 else None
+                output = cmd_executor.execute(cmd_name, cmd_args)
             else:
-                output = f"bash: {cmd.split()[0] if cmd.split() else ''}: command not found\n"
+                output = ""
             
             process.stdout.write(output)
             await process.stdout.drain()
